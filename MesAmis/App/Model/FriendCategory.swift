@@ -12,5 +12,5 @@ struct FriendCategory {
     let title: String
     let orderRank: Int
     let icon: UIImage?
-    let color: UIColor?
+    let iconColor: UIColor?
 }

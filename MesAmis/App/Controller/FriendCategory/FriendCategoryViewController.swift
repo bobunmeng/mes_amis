@@ -10,6 +10,7 @@ import UIKit
 
 class FriendCategoryViewController: UIViewController {
 
+    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
     private lazy var presenter: FriendCategoryPresenter = { FriendCategoryPresenter(self) }()
@@ -32,12 +33,33 @@ class FriendCategoryViewController: UIViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.tableFooterView = UIView(frame: .zero)
-        self.tableView.register(FriendCategoryTableViewCell.nib, forCellReuseIdentifier: FriendCategoryTableViewCell.cellIdentifier)
+        self.tableView.register(FriendCategoryTableViewCell.self, forCellReuseIdentifier: FriendCategoryTableViewCell.cellIdentifier)
     }
 
+    // MARK: - Actions
+    private func displayAddAlert() {
+        let alert = UIAlertController(title: "Hello", message: "<Message>", preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.placeholder = "Title"
+            textField.tag = 1000
+        }
+        alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { (_) in
+            guard let tfs = alert.textFields else { return }
+            var name: String = ""
+            for tf in tfs {
+                if tf.tag == 1000 {
+                    name = tf.text ?? ""
+                    break
+                }
+            }
+            self.categories.append(FriendCategory(title: name, orderRank: 1, icon: nil, iconColor: nil))
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - IBActions
     @IBAction func addCategory(_ sender: UIBarButtonItem) {
-        self.categories.append(FriendCategory(title: "New Task", orderRank: 1, icon: nil, color: nil))
+        self.displayAddAlert()
     }
     
 }
@@ -50,16 +72,20 @@ extension FriendCategoryViewController: UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: FriendCategoryTableViewCell.cellIdentifier) else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: FriendCategoryTableViewCell.cellIdentifier) as? FriendCategoryTableViewCell else {
             return UITableViewCell()
         }
         let category = self.categories[indexPath.row]
-        cell.textLabel?.text = category.title
+        cell.configure(category)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
     
 }

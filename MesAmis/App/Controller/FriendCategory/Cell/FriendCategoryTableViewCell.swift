@@ -10,20 +10,17 @@ import UIKit
 
 class FriendCategoryTableViewCell: UITableViewCell, BaseTableViewCell {
     
-    @IBOutlet weak var catIconImgView: UIImageView?
-    @IBOutlet weak var catTitleLabel: UILabel?
-    @IBOutlet weak var cardView: UIView?
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.selectionStyle = .none
     }
     
     func configure(_ data: FriendCategory) {
-        self.catIconImgView?.image = data.icon
-        self.catTitleLabel?.text = data.title
-        self.cardView?.backgroundColor = data.color
+//        self.catTitleLabel?.text = data.title
+        let icon = data.iconColor == nil ? data.icon : data.icon?.withTintColor(data.iconColor!)
+//        self.catIconImgView?.image = icon
+        self.textLabel?.text = data.title
+        self.imageView?.image = icon
     }
     
 }
